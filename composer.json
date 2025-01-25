@@ -1,0 +1,20 @@
+{
+    "name": "losthost/funnel-bot",
+    "description": "A bot to making funnel to oberbot.",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "drweb",
+            "email": "pio@pio.su"
+        }
+    ],
+    "require": {
+        "losthost/telle": "^v4"
+    },
+    "autoload": {
+        "psr-4": {
+            "losthost\\FunnelBot\\": "src/"
+        }
+    }
+    
+}
