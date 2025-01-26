@@ -1,41 +1,45 @@
 <?php
 
-namespace losthost\FunnelBot\controller\priority;
+namespace losthost\FunnelBot\controller\misc;
 
 use losthost\telle\abst\AbstractHandlerMessage;
 use losthost\telle\Bot;
 use losthost\FunnelBot\controller\action\ActionLast;
+use losthost\FunnelBot\data\task_data;
 
-class PriorityIdentity extends AbstractHandlerMessage {
+class StageIdentity extends AbstractHandlerMessage {
+    
+    protected task_data $task;
     
     protected function check(\TelegramBot\Api\Types\Message &$message): bool {
-        if ($message->getPhoto() || $message->getText()) {
-            return true;
-        }
+        return true;
     }
 
     protected function handle(\TelegramBot\Api\Types\Message &$message): bool {
-        $data = Bot::$session->data;
+
+        global $my_bot;
+        $this->task = new task_data(['bot_id' => $my_bot->tg_id, 'user_id' => Bot::$user->id], true);
         
         if ($message->getText()) {
-            $data['name'] = $message->getText();
+            $this->task->company_name = $message->getText();
         } elseif ($message->getPhoto()) {
             if ($message->getCaption()) {
-                $data['name'] = $message->getCaption();
+                $this->task->company_name = $message->getCaption();
             }
             $size = 0;
             foreach ($message->getPhoto() as $photo) {
                 if ($photo->getFileSize() > $size) {
-                    $data['logo'] = $photo->getFileId();
+                    $this->task->company_logo = $photo->getFileId();
                     $size = $photo->getFileSize();
                 }
             }
         }
         
-        Bot::$session->set('data', $data);
+        $this->task->isModified() && $this->task->write();
 
-        if (!empty($data['name'] && !empty($data['logo']))) {
-            static::unsetPriority();
+        if ($this->task->company_name && $this->task->company_logo) {
+            $this->task->stage = 'done';
+            $this->task->write();
             ActionLast::do();
         }
         

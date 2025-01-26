@@ -4,6 +4,8 @@ namespace losthost\FunnelBot\controller\command;
 
 use losthost\telle\Bot;
 use losthost\telle\abst\AbstractHandlerCommand;
+use losthost\FunnelBot\view\BotAnswer;
+use TelegramBot\Api\BotApi;
 
 class CommandSetHello extends AbstractHandlerCommand {
     
@@ -11,12 +13,12 @@ class CommandSetHello extends AbstractHandlerCommand {
     
     protected function handle(\TelegramBot\Api\Types\Message &$message): bool {
      
-        $my_admin = Bot::getMe()->getUsername(). '_admin';
+        global $my_bot;
         
-        if (Bot::param($my_admin, null) == Bot::$user->id) {
+        if ($my_bot->admin_id == Bot::$user->id) {
             $this->process($message);
         } else {
-            //
+            Bot::logComment('You are not admin. Admin is: '. $my_bot->admin_id);
         }
         
         return true;
@@ -24,7 +26,13 @@ class CommandSetHello extends AbstractHandlerCommand {
     
     protected function process() {
         
-        Bot::$api->sendMessage(Bot::$chat->id, "Отправьте сообщение с новым приветствием.\n\nВы можете использовать только текстовое сообщение с любым форматированием и эмоджи.", 'html');
+        $message_data = [
+            'text' => "Отправьте сообщение с новым приветствием.\n\nВы можете использовать только текстовое сообщение с любым форматированием и эмоджи.",
+            'parse_mode' => 'HTML',
+            'chat_id' => Bot::$chat->id
+        ];
+        
+        BotAnswer::send('sendMessage', $message_data);
         \losthost\FunnelBot\controller\priority\PioritySetHello::setPriority(null);
         
     }

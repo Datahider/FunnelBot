@@ -3,18 +3,20 @@
 namespace losthost\FunnelBot\controller\action;
 
 use losthost\telle\Bot;
-use losthost\telle\model\DBBotParam;
+use TelegramBot\Api\BotApi;
 
 class ActionSendHello {
     
     static public function do() {
         
-        $hello_param_name = Bot::getMe()->getUsername(). '_hello';
-        $hello_param = new DBBotParam($hello_param_name, null);
+        global $my_bot;
         
-        $hello_value = unserialize($hello_param->value);
+        $hello_value = unserialize($my_bot->hello_data);
         
-        Bot::$api->call('sendMessage', [
+        Bot::logComment('Initializing Bot API...');
+        $api = new BotApi($my_bot->token);
+        Bot::logComment('Bot API initialized');
+        $api->call('sendMessage', [
                     'chat_id' => Bot::$chat->id,
                     'text' => $hello_value['text'],
                     'entities' => $hello_value['entities']

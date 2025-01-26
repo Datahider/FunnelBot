@@ -2,12 +2,12 @@
 
 namespace losthost\FunnelBot\controller\priority;
 
-use losthost\telle\abst\AbstractHandlerMessage;
+use losthost\FunnelBot\controller\priority\AbstractPriorityMessage;
+use losthost\FunnelBot\controller\command\CheckSetup;
+use losthost\FunnelBot\view\BotAnswer;
 use losthost\telle\Bot;
-use losthost\telle\model\DBBotParam;
-use losthost\FunnelBot\controller\action\ActionSendHello;
 
-class PioritySetHello extends AbstractHandlerMessage {
+class PioritySetHello extends AbstractPriorityMessage {
     
     protected function check(\TelegramBot\Api\Types\Message &$message): bool {
         static::unsetPriority();
@@ -20,7 +20,9 @@ class PioritySetHello extends AbstractHandlerMessage {
         return true;
     }
 
-    protected function handle(\TelegramBot\Api\Types\Message &$message): bool {
+    protected function process(\TelegramBot\Api\Types\Message &$message): bool {
+        
+        global $my_bot;
         
         $text = $message->getText();
         $entities = $message->getEntities();
@@ -31,14 +33,20 @@ class PioritySetHello extends AbstractHandlerMessage {
         }
         
         if ($text) {
-            $hello_param_name = Bot::getMe()->getUsername(). '_hello';
-            $hello_param = new DBBotParam($hello_param_name, null);
-            
-            $hello_param->value = serialize(['text' => $text, 'entities' => json_encode($entities_array)]);
-            
-            ActionSendHello::do();
+            $my_bot->hello_data = serialize(['text' => $text, 'entities' => json_encode($entities_array)]);
+            $my_bot->write();
+            $this->answerOk();
         }
         
         return true;
+    }
+    
+    protected function answerOk() {
+    
+        BotAnswer::send('sendMessage', [
+            'chat_id' => Bot::$chat->id,
+            'text' => "Новое приветствие установлено. Для тестирования нажмите /start"
+        ]);
+        
     }
 }
