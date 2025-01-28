@@ -2,8 +2,12 @@
 
 use losthost\telle\Bot;
 use losthost\FunnelBot\data\bot_data;
+use losthost\FunnelBot\data\message_data;
+use losthost\FunnelBot\data\task_data;
 
 bot_data::initDataStructure();
+task_data::initDataStructure();
+message_data::initDataStructure();
 
 Bot::addHandler(\losthost\FunnelBot\controller\callback\CallbackDone::class);
 

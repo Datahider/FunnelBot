@@ -6,6 +6,7 @@ use losthost\telle\abst\AbstractHandlerCommand;
 use losthost\telle\Bot;
 use losthost\telle\model\DBBotParam;
 use losthost\FunnelBot\view\BotAnswer;
+use losthost\FunnelBot\misc\globals;
 
 class CommandSetSubject extends AbstractHandlerCommand {
     
@@ -13,12 +14,8 @@ class CommandSetSubject extends AbstractHandlerCommand {
     
     protected function handle(\TelegramBot\Api\Types\Message &$message): bool { 
         
-        global $my_bot;
-        
-        if ($my_bot->admin_id == Bot::$user->id) {
+        if (globals::isAdmin()) {
             $this->process();
-        } else {
-            Bot::logComment('You are not admin. Admin is: '. $my_bot->admin_id);
         }
         
         return true;
@@ -26,22 +23,27 @@ class CommandSetSubject extends AbstractHandlerCommand {
 
     protected function process() {
         
-        global $my_bot;
-        
         if ($this->args) {
-            $my_bot->task_subject = $this->args;
-            $my_bot->write();
+            globals::$my_bot->task_subject = $this->args;
+            globals::$my_bot->write();
+            $subject = globals::$my_bot->task_subject;
             BotAnswer::send('sendMessage', [
                 'chat_id' => Bot::$chat->id,
-                'text' => "Установлена тема новой задачи по умолчанию:\n\n<b>$my_bot->task_subject</b>\n\nБот не будет запрашивать тему задачи у пользователя",
+                'text' => "Установлена тема новой задачи по умолчанию:\n\n<b>$subject</b>\n\nБот не будет запрашивать тему задачи у пользователя",
                 'parse_mode' => 'HTML'
             ]);
         } else {
-            $my_bot->task_subject = null;
-            $my_bot->write();
+            globals::$my_bot->task_subject = null;
+            globals::$my_bot->write();
             BotAnswer::send('sendMessage', [
                 'chat_id' => Bot::$chat->id,
-                'text' => "Тема новой задачи по умолчанию сброшена.\n\nБот будет запрашивать тему задачи у пользователя",
+                'text' => <<<FIN
+                    Тема новой задачи по умолчанию сброшена. Первое сообщение пользователя будет считаться темой задачи. При необходимости измените приветствие соответствующим образом.
+                
+                    Для установки темы по умолчанию используйте:
+                    /setsubject <b>Тема</b>
+                    FIN,
+                'parse_mode' => 'HTML'
             ]);
         }
         

@@ -7,6 +7,8 @@ use losthost\telle\Bot;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use losthost\FunnelBot\data\task_data;
 use TelegramBot\Api\BotApi;
+use losthost\FunnelBot\data\message_data;
+use losthost\FunnelBot\misc\globals;
 
 class StageDescription extends AbstractHandlerMessage {
 
@@ -18,13 +20,11 @@ class StageDescription extends AbstractHandlerMessage {
 
     protected function handle(\TelegramBot\Api\Types\Message &$message): bool {
 
-        global $my_bot;
-        
-        $this->task = new task_data(['bot_id' => $my_bot->tg_id, 'user_id' => Bot::$user->id], true);
-        $messages = $this->task->messages ? $this->task->messages : [];
-        $messages[] = $message->getMessageId();
-        $this->task->messages = $messages;
-        $this->task->write();
+        $this->task = new task_data(['bot_id' => globals::$my_bot->tg_id, 'user_id' => Bot::$user->id], true);
+        $stored_message = new message_data();
+        $stored_message->task_id = $this->task->id;
+        $stored_message->message  = $message;
+        $stored_message->write();
         $this->sendGood();
         
         return true;
@@ -32,9 +32,7 @@ class StageDescription extends AbstractHandlerMessage {
     
     protected function sendGood() {
         
-        global $my_bot;
-        
-        $api = new BotApi($my_bot->token);
+        $api = new BotApi(globals::$my_bot->token);
         
         if ($this->task->message_to_delete) {
             try {

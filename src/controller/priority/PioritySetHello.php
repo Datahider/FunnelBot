@@ -3,7 +3,7 @@
 namespace losthost\FunnelBot\controller\priority;
 
 use losthost\FunnelBot\controller\priority\AbstractPriorityMessage;
-use losthost\FunnelBot\controller\command\CheckSetup;
+use losthost\FunnelBot\misc\globals;
 use losthost\FunnelBot\view\BotAnswer;
 use losthost\telle\Bot;
 
@@ -22,8 +22,6 @@ class PioritySetHello extends AbstractPriorityMessage {
 
     protected function process(\TelegramBot\Api\Types\Message &$message): bool {
         
-        global $my_bot;
-        
         $text = $message->getText();
         $entities = $message->getEntities();
         $entities_array = [];
@@ -33,8 +31,8 @@ class PioritySetHello extends AbstractPriorityMessage {
         }
         
         if ($text) {
-            $my_bot->hello_data = serialize(['text' => $text, 'entities' => json_encode($entities_array)]);
-            $my_bot->write();
+            globals::$my_bot->hello_data = serialize(['text' => $text, 'entities' => json_encode($entities_array)]);
+            globals::$my_bot->write();
             $this->answerOk();
         }
         

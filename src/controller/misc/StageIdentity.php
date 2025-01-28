@@ -6,6 +6,7 @@ use losthost\telle\abst\AbstractHandlerMessage;
 use losthost\telle\Bot;
 use losthost\FunnelBot\controller\action\ActionLast;
 use losthost\FunnelBot\data\task_data;
+use losthost\FunnelBot\misc\globals;
 
 class StageIdentity extends AbstractHandlerMessage {
     
@@ -17,8 +18,7 @@ class StageIdentity extends AbstractHandlerMessage {
 
     protected function handle(\TelegramBot\Api\Types\Message &$message): bool {
 
-        global $my_bot;
-        $this->task = new task_data(['bot_id' => $my_bot->tg_id, 'user_id' => Bot::$user->id], true);
+        $this->task = new task_data(['bot_id' => globals::$my_bot->tg_id, 'user_id' => Bot::$user->id], true);
         
         if ($message->getText()) {
             $this->task->company_name = $message->getText();

@@ -6,6 +6,7 @@ use losthost\telle\abst\AbstractHandlerCommand;
 use losthost\FunnelBot\data\bot_data;
 use losthost\FunnelBot\view\BotAnswer;
 use losthost\telle\Bot;
+use losthost\FunnelBot\misc\globals;
 
 class CheckSetup extends AbstractHandlerCommand {
 
@@ -14,16 +15,13 @@ class CheckSetup extends AbstractHandlerCommand {
     
     protected function check(\TelegramBot\Api\Types\Message &$message): bool {
         
-        global $my_bot;
-        
         $id = filter_input(INPUT_SERVER, self::MY_HEADER);
         
-        $my_bot = new bot_data(['id' => $id], true);
-        if ($my_bot->isNew()) {
+        globals::$my_bot = new bot_data(['id' => $id], true);
+        if (globals::$my_bot->isNew()) {
             return true;
         }
         
-        Bot::logComment('Bot is found: '. $my_bot->username);
         return false;
     }
     

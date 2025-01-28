@@ -4,7 +4,7 @@ namespace losthost\FunnelBot\controller\callback;
 
 use losthost\telle\abst\AbstractHandlerCallback;
 use losthost\telle\Bot;
-use losthost\FunnelBot\controller\priority\PriorityIdentity;
+use losthost\FunnelBot\misc\globals;
 use losthost\FunnelBot\data\task_data;
 use TelegramBot\Api\BotApi;
 use losthost\FunnelBot\controller\action\ActionLast;
@@ -25,14 +25,16 @@ class CallbackDone extends AbstractHandlerCallback {
     protected function handle(\TelegramBot\Api\Types\CallbackQuery &$callback_query): bool {
         
         $check = new CheckSetup();
-        if ($check->checkUpdate($callback_query->getMessage())) {
-            $check->handleUpdate($callback_query->getMessage());
+        $message = $callback_query->getMessage();
+        if ($check->checkUpdate($message)) {
+            $check->handleUpdate($message);
         } else {
             $this->process($callback_query);
         }
 
         try {
-            Bot::$api->answerCallbackQuery($callback_query->getId());
+            $api = new BotApi(globals::$my_bot->token);
+            $api->answerCallbackQuery($callback_query->getId());
         } catch (\Exception $exc) {
             Bot::logException($exc);
         }
@@ -42,9 +44,7 @@ class CallbackDone extends AbstractHandlerCallback {
 
     protected function process(\TelegramBot\Api\Types\CallbackQuery &$callback_query) {
         
-        global $my_bot;
-
-        $this->task = new task_data(['bot_id' => $my_bot->tg_id, 'user_id' => Bot::$user->id], true);
+        $this->task = new task_data(['bot_id' => globals::$my_bot->tg_id, 'user_id' => Bot::$user->id], true);
 
         if (empty($this->task->company_logo) || empty($this->task->company_name)) {
             $this->sendGiveIdentity($callback_query->getMessage()->getMessageId());
@@ -59,8 +59,6 @@ class CallbackDone extends AbstractHandlerCallback {
     
     protected function sendGiveIdentity(int $edit_message_id) {
         
-        global $my_bot;
-        
         $text = <<<FIN
                 Остался последний, но от этого не менее важный шаг.
                 
@@ -70,7 +68,7 @@ class CallbackDone extends AbstractHandlerCallback {
                 Вы можете выслать логотип и название отдельно в любом порядке или отправить изображение и текст в одном сообщении.
                 FIN;
 
-        $api = new BotApi($my_bot->token);
+        $api = new BotApi(globals::$my_bot->token);
         $api->editMessageText(Bot::$chat->id, $edit_message_id,
                 '✅ Отлично, спасибо!', 'HTML');
         sleep(1);

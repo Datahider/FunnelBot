@@ -6,6 +6,7 @@ use losthost\telle\Bot;
 use losthost\FunnelBot\data\task_data;
 use losthost\FunnelBot\view\BotAnswer;
 use losthost\telle\abst\AbstractHandlerMessage;
+use losthost\FunnelBot\misc\globals;
 
 class StageSubject extends AbstractHandlerMessage {
 
@@ -31,8 +32,6 @@ class StageSubject extends AbstractHandlerMessage {
     
     protected function handle(\TelegramBot\Api\Types\Message &$message) : bool {
 
-        global $my_bot;
-        
         $text = $message->getText();
         
         if (!$text) {
@@ -43,12 +42,11 @@ class StageSubject extends AbstractHandlerMessage {
             return true;
         }
         
-        $this->task = new task_data(['bot_id' => $my_bot->tg_id, 'user_id' => Bot::$user->id], true);
+        $this->task = new task_data(['bot_id' => globals::$my_bot->tg_id, 'user_id' => Bot::$user->id], true);
         $this->task->subject = $text;
         $this->task->stage = 'description';
         $this->task->write();
         
-        Bot::logComment('Got subject');
         BotAnswer::send('sendMessage', [
             'chat_id' => Bot::$chat->id,
             'text' => 'Ок. Теперь более подробно опишите суть задачи. При необходимости приложите изображения, видео или другие медиа.'

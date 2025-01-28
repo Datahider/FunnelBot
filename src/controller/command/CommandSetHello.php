@@ -6,6 +6,7 @@ use losthost\telle\Bot;
 use losthost\telle\abst\AbstractHandlerCommand;
 use losthost\FunnelBot\view\BotAnswer;
 use TelegramBot\Api\BotApi;
+use losthost\FunnelBot\misc\globals;
 
 class CommandSetHello extends AbstractHandlerCommand {
     
@@ -13,12 +14,8 @@ class CommandSetHello extends AbstractHandlerCommand {
     
     protected function handle(\TelegramBot\Api\Types\Message &$message): bool {
      
-        global $my_bot;
-        
-        if ($my_bot->admin_id == Bot::$user->id) {
+        if (globals::isAdmin()) {
             $this->process($message);
-        } else {
-            Bot::logComment('You are not admin. Admin is: '. $my_bot->admin_id);
         }
         
         return true;

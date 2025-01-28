@@ -7,6 +7,7 @@ use losthost\FunnelBot\data\task_data;
 use losthost\telle\Bot;
 use losthost\FunnelBot\view\BotAnswer;
 use losthost\FunnelBot\view\AnswerAlreadyDone;
+use losthost\FunnelBot\misc\globals;
 
 use losthost\FunnelBot\controller\misc\StageSubject;
 use losthost\FunnelBot\controller\misc\StageDescription;
@@ -18,9 +19,7 @@ class StageProcessor extends AbstractHandlerMessage {
     
     protected function check(\TelegramBot\Api\Types\Message &$message): bool {
         
-        global $my_bot;
-        
-        $this->task = new task_data(['bot_id' => $my_bot->tg_id, 'user_id' => Bot::$user->id], true);
+        $this->task = new task_data(['bot_id' => globals::$my_bot->tg_id, 'user_id' => Bot::$user->id], true);
         if ($this->task->stage) {
             return true;
         }
@@ -40,9 +39,6 @@ class StageProcessor extends AbstractHandlerMessage {
             case 'identity': 
                 $handler = new StageIdentity();
                 return $handler->handleUpdate($message);
-            case 'done': 
-                AnswerAlreadyDone::do($this->task->group_link);
-                return true;
             default:
                 BotAnswer::send('sendMessage', [
                     'chat_id' => Bot::$chat->id,

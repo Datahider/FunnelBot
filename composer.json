@@ -9,6 +9,7 @@
         }
     ],
     "require": {
+        "losthost/proxy-message": "dev-master",        
         "losthost/telle": "^v4"
     },
     "autoload": {

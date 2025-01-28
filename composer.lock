@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9f3f76c309f02bb8d67c6aad48798f0",
+    "content-hash": "a5bbe7d4ec157783256c7be9c9c8b8e8",
     "packages": [
         {
             "name": "dragonmantank/cron-expression",
@@ -117,6 +117,45 @@
                 "source": "https://github.com/Datahider/DB/tree/3.0.13-beta"
             },
             "time": "2024-11-16T04:12:38+00:00"
+        },
+        {
+            "name": "losthost/proxy-message",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Datahider/ProxyMessage.git",
+                "reference": "ac624fb47233c3e9b305ca453fe148aaa8aae9d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Datahider/ProxyMessage/zipball/ac624fb47233c3e9b305ca453fe148aaa8aae9d9",
+                "reference": "ac624fb47233c3e9b305ca453fe148aaa8aae9d9",
+                "shasum": ""
+            },
+            "require": {
+                "losthost/db": "^v3",
+                "telegram-bot/api": "^2.6"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "losthost\\ProxyMessage\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "drweb",
+                    "email": "pio@pio.su"
+                }
+            ],
+            "description": "Proxies received message of class \\TelegramBot\\Api\\Types\\Message to the given chat.",
+            "support": {
+                "issues": "https://github.com/Datahider/ProxyMessage/issues",
+                "source": "https://github.com/Datahider/ProxyMessage/tree/master"
+            },
+            "time": "2024-06-16T19:23:14+00:00"
         },
         {
             "name": "losthost/telle",
@@ -296,7 +335,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "losthost/proxy-message": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

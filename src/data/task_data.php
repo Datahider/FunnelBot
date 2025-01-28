@@ -12,11 +12,10 @@ class task_data extends DBObject {
         'user_id' => 'BIGINT(20) NOT NULL',
         'stage' => 'ENUM("sethello", "subject", "description", "identity", "done")',
         'subject' => 'VARCHAR(1024)',
-        'messages' => 'VARCHAR(1024)',
         'message_to_delete' => 'BIGINT(20)',
         'company_name' => 'VARCHAR(128)',
         'company_logo' => 'VARCHAR(128)',
-        'group_link' => 'VARCHAR(128)',
+        'group_id' => 'BIGINT(20)',
         'PRIMARY KEY' => 'id',
         'UNIQUE INDEX BOT_USER_IDS' => ['bot_id', 'user_id']
     ];
