@@ -37,7 +37,7 @@ class ActionLast {
             'start_time' => date_create()->format(DB::DATE_FORMAT),
             'start_in_background' => 0,
             'job_class' => 'losthost\Oberbot\background\CreateJobFromFunnel',
-            'job_args' => $this->task->id. ':'. $this->task->subject,
+            'job_args' => $this->task->id,
         ];
         $sth = DB::prepare(<<<FIN
                 INSERT INTO sprt_telle_pending_jobs
